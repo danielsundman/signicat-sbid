@@ -1,0 +1,33 @@
+{
+  "name": "signicat-sbid",
+  "version": "1.0.0",
+  "description": "Test bed for using `signicat` &amp; Swedish BankID",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielsundman/signicat-sbid.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielsundman/signicat-sbid/issues"
+  },
+  "homepage": "https://github.com/danielsundman/signicat-sbid#readme",
+  "devDependencies": {
+    "nodemon": "^1.18.4",
+    "request-debug": "^0.2.0"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "query-string": "^6.1.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "uuid": "^3.3.2"
+  }
+}
