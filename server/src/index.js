@@ -1,5 +1,6 @@
 const express = require('express');
 const uuidv4 = require('uuid/v4');
+const cors = require('cors');
 
 const { getToken, getUserInfo, authenticate } = require('./signicat');
 
@@ -10,6 +11,7 @@ const db = require('./db');
 const queue = [];
 
 const app = express();
+app.use(cors());
 
 app.post('/authenticate/:pno', (req, res) => {
   const state = uuidv4();
@@ -29,11 +31,19 @@ app.post('/authenticate/:pno', (req, res) => {
   return res.json({ authReference: state });
 });
 
-app.get('/peek/:state', async (req, res) => {
-  const { state } = req.params;
-  const authState = db.getAuthState(state);
+app.delete('/:authReference', async (req, res) => {
+  const { authReference } = req.params;
+  const authState = db.getAuthState(authReference);
   if (!authState) return res.status(404).send();
-  return res.json(authState);
+  db.remove(authReference);
+  return res.status(202).send();
+});
+
+app.get('/peek/:authReference', async (req, res) => {
+  const { authReference } = req.params;
+  const authState = db.getAuthState(authReference);
+  if (!authState) return res.status(404).send();
+  return res.json(authState.data);
 });
 
 app.get('/redirect', async (req, res) => {

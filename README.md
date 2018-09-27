@@ -1,2 +1,2 @@
 # signicat-sbid
-Test bed for using `signicat` &amp; Swedish BankID
+Test bed for using [`signicat`](https://www.signicat.com/) &amp; Swedish BankID

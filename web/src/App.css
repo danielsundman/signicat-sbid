@@ -24,6 +24,7 @@
 
 .App-button {
   height: 55px;
+  width: 75px;
 }
 
 @keyframes App-logo-spin {
