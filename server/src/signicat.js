@@ -64,12 +64,9 @@ const getUserInfo = async token => {
 const authenticate = async (pno, state) => {
   const auth = (pno, state) => {
     const options = {
-      uri2: cfg.authUri(pno, state),
-      uri: `https://preprod.signicat.com/oidc/authorize?response_type=code&scope=openid+profile&client_id=demo-inapp&redirect_uri=http://localhost/redirect&acr_values=urn:signicat:oidc:method:sbid-inapp&state=${state}&login_hint=subject-${pno}`,
+      uri: cfg.authUri(pno, state),
       json: true
     };
-    console.log('options.uri', options.uri);
-    console.log('options.uri2', options.uri2);
 
     return requestPromise(options);
   };
@@ -98,7 +95,11 @@ const authenticate = async (pno, state) => {
   };
 
   try {
-    const { collectUrl, orderRef } = await auth(pno, state);
+    const { autoStartToken, collectUrl, orderRef } = await auth(pno, state);
+
+    const bankIdUrl = `bankid:///?autostarttoken=${autoStartToken}&redirect=null`;
+    console.log('bankIdUrl', bankIdUrl);
+
     const completeUrl = await getCompleteUrl(collectUrl, orderRef);
     return await complete(completeUrl);
   } catch (e) {
