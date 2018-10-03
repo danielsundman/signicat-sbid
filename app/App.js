@@ -1,7 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Button, ActivityIndicator, Image } from 'react-native';
 import axios from 'axios';
-// import logo from "../web/src/logo.svg";
+
+// const host = 'localhost'
+const host = '192.168.2.49';
+// const host = '192.168.0.102';
 
 export default class App extends React.Component {
   state = {
@@ -20,7 +23,7 @@ export default class App extends React.Component {
   logout = async () => {
     try {
       const { authReference } = this.state;
-      await axios.delete(`http://localhost/${authReference}`);
+      await axios.delete(`http://${host}/${authReference}`);
       this.setState({ authReference: null, data: null });
     } catch (e) {
       alert(e);
@@ -31,7 +34,7 @@ export default class App extends React.Component {
     try {
       // const pno = prompt('pno');
       const pno = '200101018539';
-      const { data: { authReference } } = await axios.post(`http://localhost/authenticate/${pno}`);
+      const { data: { authReference } } = await axios.post(`http://${host}/authenticate/${pno}`);
       this.setState({ authReference });
     } catch (e) {
       this.setState({ authReference: null, data: null });
@@ -43,7 +46,7 @@ export default class App extends React.Component {
     if (!this.state.authReference || this.state.data) return;
     try {
       const { authReference } = this.state;
-      const res = await axios.get(`http://localhost/peek/${authReference}`);
+      const res = await axios.get(`http://${host}/peek/${authReference}`);
       const { data } = res;
       if (data) {
         this.setState({ data });
@@ -75,8 +78,12 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         {
-          !userInfo && !this.state.authReference &&
-          <Button title={'Log In!'} onPress={this.login} />
+          !userInfo && !this.state.authReference && (
+            <View style={styles.container}>
+              <Button title={'Log in with BankID!'} onPress={this.login}/>
+              <Image style={{ width: 50, height: 50 }} source={require('./assets/bank-id.png')}/>
+            </View>
+          )
         }
         {
           this.state.authReference && !this.state.data &&
@@ -131,3 +138,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+console.disableYellowBox = true;
