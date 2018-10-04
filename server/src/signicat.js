@@ -64,7 +64,7 @@ const getUserInfo = async token => {
 const authenticate = async (pno, state) => {
   const auth = (pno, state) => {
     const options = {
-      uri: cfg.authUri(pno, state),
+      uri: cfg.authUri(state, pno),
       json: true
     };
 
@@ -107,8 +107,53 @@ const authenticate = async (pno, state) => {
   }
 };
 
+const auth = (state) => {
+  const options = {
+    uri: cfg.authUri(state),
+    json: true
+  };
+
+  console.log('options', options);
+
+  return requestPromise(options);
+};
+
+const authenticate2 = async (collectUrl, orderRef) => {
+  const collect = (collectUrl, orderRef) => {
+    const options = {
+      uri: `${collectUrl}?orderRef=${orderRef}`,
+      json: true
+    };
+    return requestPromise(options);
+  };
+
+  const getCompleteUrl = async (collectUrl, orderRef) => {
+    let done = false;
+    while (!done) {
+      const { progressStatus, completeUrl = null } = await collect(collectUrl, orderRef);
+      console.log('progressStatus', progressStatus);
+      done = progressStatus === 'COMPLETE';
+      if (done) return completeUrl;
+      await sleep(2000);
+    }
+  };
+
+  const complete = async uri => {
+    return await requestPromise({ uri });
+  };
+
+  try {
+    const completeUrl = await getCompleteUrl(collectUrl, orderRef);
+    return await complete(completeUrl);
+  } catch (e) {
+    console.log('e', e.message);
+  }
+};
+
 module.exports = {
   getToken,
   getUserInfo,
-  authenticate
+  authenticate,
+  authenticate2,
+  auth
 };

@@ -2,7 +2,7 @@ const express = require('express');
 const uuidv4 = require('uuid/v4');
 const cors = require('cors');
 
-const { getToken, getUserInfo, authenticate } = require('./signicat');
+const { getToken, getUserInfo, authenticate, authenticate2, auth } = require('./signicat');
 
 // redis?
 const db = require('./db');
@@ -29,6 +29,30 @@ app.post('/authenticate/:pno', (req, res) => {
   queue.push(startAuth);
 
   return res.json({ authReference: state });
+});
+
+app.post('/auth', async (req, res) => {
+  const state = uuidv4();
+  db.setAuthStarted(state);
+
+  console.log('state', state);
+
+  const { autoStartToken, collectUrl, orderRef } = await auth(state);
+
+  const bankIdUrl = `bankid:///?autostarttoken=${autoStartToken}&redirect=null`;
+  console.log('bankIdUrl', bankIdUrl);
+
+  const startAuth = async () => {
+    try {
+      await authenticate2(collectUrl, orderRef);
+    } catch (e) {
+      db.setAuthError(state, e.message);
+    }
+  };
+
+  queue.push(startAuth);
+
+  return res.json({ authReference: state, autoStartToken });
 });
 
 app.delete('/:authReference', async (req, res) => {

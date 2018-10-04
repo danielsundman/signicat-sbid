@@ -16,14 +16,14 @@ module.exports = {
 
   oidc,
 
-  authUri: (pno, state) => (
+  authUri: (state, pno = null) => (
     `${oidc.baseUri}/authorize?` +
     `response_type=code&` +
     `scope=${oidc.SCOPE}&`+
     `client_id=${oidc.CLIENT_ID}&`+
     `redirect_uri=${oidc.REDIRECT_URI}&` +
     `acr_values=${oidc.ACR_VALUES}&` +
-    `state=${state}&` +
-    `login_hint=subject-${pno}`
+    `state=${state}` +
+    (pno ? `&login_hint=subject-${pno}` : '')
   )
 };

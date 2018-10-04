@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, ActivityIndicator, Image, Linking } from 'react-native';
+import { StyleSheet, Text, View, Button, ActivityIndicator, Image, Linking, TextInput } from 'react-native';
 import axios from 'axios';
 
 // const host = 'localhost'
@@ -8,12 +8,13 @@ const host = '192.168.2.49';
 
 export default class App extends React.Component {
   state = {
-    authReference: null
+    authReference: null,
+    pno: ''
   };
 
   componentDidMount = async () => {
     const bankId = await Linking.canOpenURL('bankid');
-    console.log('bankId', bankId);
+    alert(`bankId: ${bankId}`);
 
     this.timer = setInterval(this.poll, 2000);
   };
@@ -35,13 +36,23 @@ export default class App extends React.Component {
 
   login = async () => {
     try {
-      // const pno = prompt('pno');
-      const pno = '200101018539';
+      const pno = this.state.pno;
       const { data: { authReference } } = await axios.post(`http://${host}/authenticate/${pno}`);
       this.setState({ authReference });
-      Linking.openURL('bankid:///?redirect=null');
     } catch (e) {
       this.setState({ authReference: null, data: null });
+      console.log('eee', e);
+    }
+  };
+
+  loginNoPno = async () => {
+    try {
+      const { data: { authReference, autoStartToken } } = await axios.post(`http://${host}/auth`);
+      this.setState({ authReference, autoStartToken });
+      const url = `bankid:///?autostarttoken=${autoStartToken}&redirect=null`;
+      Linking.openURL(url);
+    } catch (e) {
+      this.setState({ authReference: null, autoStartToken: null, data: null });
       console.log('eee', e);
     }
   };
@@ -84,7 +95,13 @@ export default class App extends React.Component {
         {
           !userInfo && !this.state.authReference && (
             <View style={styles.container}>
-              <Button title={'Log in with BankID!'} onPress={this.login}/>
+              <TextInput
+                style={{height: 40, width: 200, borderColor: 'gray', borderWidth: 1}}
+                value={this.state.pno}
+                keyboardType={'numeric'}
+                onChangeText={pno => this.setState({ pno })}/>
+              <Button title={'Log in with BankID & pno!'} onPress={this.login}/>
+              <Button title={'Log in with BankID NO pno!'} onPress={this.loginNoPno}/>
               <Image style={{ width: 50, height: 50 }} source={require('./assets/bank-id.png')}/>
             </View>
           )
