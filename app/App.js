@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, Text, View, Button, ActivityIndicator, Image, Linking } from 'react-native';
 import axios from 'axios';
 
 // const host = 'localhost'
@@ -11,7 +11,10 @@ export default class App extends React.Component {
     authReference: null
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
+    const bankId = await Linking.canOpenURL('bankid');
+    console.log('bankId', bankId);
+
     this.timer = setInterval(this.poll, 2000);
   };
 
@@ -36,6 +39,7 @@ export default class App extends React.Component {
       const pno = '200101018539';
       const { data: { authReference } } = await axios.post(`http://${host}/authenticate/${pno}`);
       this.setState({ authReference });
+      Linking.openURL('bankid:///?redirect=null');
     } catch (e) {
       this.setState({ authReference: null, data: null });
       console.log('eee', e);
