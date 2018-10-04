@@ -61,6 +61,29 @@ const getUserInfo = async token => {
   }
 };
 
+const collect = (collectUrl, orderRef) => {
+  const options = {
+    uri: `${collectUrl}?orderRef=${orderRef}`,
+    json: true
+  };
+  return requestPromise(options);
+};
+
+const getCompleteUrl = async (collectUrl, orderRef) => {
+  let done = false;
+  while (!done) {
+    const { progressStatus, completeUrl = null } = await collect(collectUrl, orderRef);
+    console.log('progressStatus', progressStatus);
+    done = progressStatus === 'COMPLETE';
+    if (done) return completeUrl;
+    await sleep(2000);
+  }
+};
+
+const complete = async uri => {
+  return await requestPromise({ uri });
+};
+
 const authenticate = async (pno, state) => {
   const auth = (pno, state) => {
     const options = {
@@ -69,29 +92,6 @@ const authenticate = async (pno, state) => {
     };
 
     return requestPromise(options);
-  };
-
-  const collect = (collectUrl, orderRef) => {
-    const options = {
-      uri: `${collectUrl}?orderRef=${orderRef}`,
-      json: true
-    };
-    return requestPromise(options);
-  };
-
-  const getCompleteUrl = async (collectUrl, orderRef) => {
-    let done = false;
-    while (!done) {
-      const { progressStatus, completeUrl = null } = await collect(collectUrl, orderRef);
-      console.log('progressStatus', progressStatus);
-      done = progressStatus === 'COMPLETE';
-      if (done) return completeUrl;
-      await sleep(2000);
-    }
-  };
-
-  const complete = async uri => {
-    return await requestPromise({ uri });
   };
 
   try {
@@ -119,29 +119,6 @@ const auth = (state) => {
 };
 
 const authenticate2 = async (collectUrl, orderRef) => {
-  const collect = (collectUrl, orderRef) => {
-    const options = {
-      uri: `${collectUrl}?orderRef=${orderRef}`,
-      json: true
-    };
-    return requestPromise(options);
-  };
-
-  const getCompleteUrl = async (collectUrl, orderRef) => {
-    let done = false;
-    while (!done) {
-      const { progressStatus, completeUrl = null } = await collect(collectUrl, orderRef);
-      console.log('progressStatus', progressStatus);
-      done = progressStatus === 'COMPLETE';
-      if (done) return completeUrl;
-      await sleep(2000);
-    }
-  };
-
-  const complete = async uri => {
-    return await requestPromise({ uri });
-  };
-
   try {
     const completeUrl = await getCompleteUrl(collectUrl, orderRef);
     return await complete(completeUrl);
