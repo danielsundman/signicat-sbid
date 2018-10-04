@@ -24,7 +24,11 @@
       "supportsTablet": true,
       "infoPlist": {
         "LSApplicationQueriesSchemes": ["bankid"]
-      }
+      },
+      "bundleIdentifier": "se.yds.bi"
+    },
+    "android": {
+      "package": "se.yds.bi"
     }
   }
 }
