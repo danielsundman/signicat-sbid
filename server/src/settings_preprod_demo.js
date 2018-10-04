@@ -4,7 +4,7 @@ const oidc = {
   responseType: 'code',
 
   CLIENT_ID: 'demo-inapp', // Service name
-  SCOPE: 'openid+profile',
+  SCOPE: 'openid+profile+signicat.national_id',
   REDIRECT_URI: 'http://localhost/redirect', // Redirect URI ! MUST CHANGE !
   ACR_VALUES: 'urn:signicat:oidc:method:sbid-inapp',
   CRED64: 'ZGVtby1pbmFwcDptcVotXzc1LWYyd05zaVFUT05iN09uNGFBWjd6YzIxOG1yUlZrMW91ZmE4'

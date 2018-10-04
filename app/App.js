@@ -80,6 +80,8 @@ export default class App extends React.Component {
           <Text>Logged In!</Text>
           <Text>name: {userInfo.name}</Text>
           <Text>Given name: {userInfo.given_name}</Text>
+          <Text>Family name: {userInfo.family_name}</Text>
+          <Text>National ID: {userInfo['signicat.national_id']}</Text>
           <Text>Token: {this.state.data.token}</Text>
           <Button title={'Log Out!'} onPress={this.logout} />
         </View>
